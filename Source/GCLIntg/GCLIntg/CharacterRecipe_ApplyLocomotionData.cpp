@@ -2,12 +2,11 @@
 
 #include "CharacterRecipe_ApplyLocomotionData.h"
 
-#include "GCLIntgLogs.h"
-
 #include "LocomotionComponent.h"
 #include "LocomotionData.h"
 
 #include "CharacterInitStateComponent.h"
+#include "GCExtLogs.h"
 
 #include "GameFramework/Character.h"
 
@@ -18,6 +17,11 @@ UCharacterRecipe_ApplyLocomotionData::UCharacterRecipe_ApplyLocomotionData()
 {
 	InstancingPolicy = ECharacterRecipeInstancingPolicy::NonInstanced;
 	NetExecutionPolicy = ECharacterRecipeNetExecutionPolicy::Both;
+
+#if WITH_EDITOR
+	StaticClass()->FindPropertyByName(FName{ TEXTVIEW("InstancingPolicy") })->SetPropertyFlags(CPF_DisableEditOnTemplate);
+	StaticClass()->FindPropertyByName(FName{ TEXTVIEW("NetExecutionPolicy") })->SetPropertyFlags(CPF_DisableEditOnTemplate);
+#endif
 }
 
 void UCharacterRecipe_ApplyLocomotionData::StartSetupNonInstanced_Implementation(FCharacterRecipePawnInfo Info) const
@@ -32,7 +36,7 @@ void UCharacterRecipe_ApplyLocomotionData::StartSetupNonInstanced_Implementation
 				LocomotionData.IsValid() ? LocomotionData.Get() : LocomotionData.LoadSynchronous()
 			};
 
-			UE_LOG(LogGCLI, Log, TEXT("++LocomotionData (Name: %s)"), *GetNameSafe(LoadedLocomotionData));
+			UE_LOG(LogGameExt_CharacterRecipe, Log, TEXT("++LocomotionData (Name: %s)"), *GetNameSafe(LoadedLocomotionData));
 
 			LC->SetLocomotionData(LoadedLocomotionData);
 		}
